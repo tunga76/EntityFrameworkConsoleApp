@@ -1,57 +1,73 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-List<Product> list = new List<Product>{
-    new Product{
-        Id = 1,
-        Ad = "Lenova",
-        Fiyat = 500
-    },
-    new Product{
-        Id = 1,
-        Ad = "HP",
-        Fiyat = 500
-    },
-    new Product{
-        Id = 1,
-        Ad = "DELL",
-        Fiyat = 500
-    },
-    new Product{
-        Id = 1,
-        Ad = "Casper",
-        Fiyat = 500
-    },
-    new Product{
-        Id = 1,
-        Ad = "Lenova",
-        Fiyat = 500
-    },
-    new Product{
-        Id = 1,
-        Ad = "Lenova",
-        Fiyat = 500
-    }
-};
+using System.ComponentModel.DataAnnotations.Schema;
+using EntityFrameworkConsoleApp.DataBaseEntity;
+using EntityFrameworkConsoleApp.DataContext;
+using EntityFrameworkConsoleApp.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-var result = (from p in list
-             group p by p.Ad
-             into g
-             select new {
-                Sayi = g.Count(),
-                Ad = g.Key
-             }).ToList();
+NorthWindContext context = new();
 
 
-result.ForEach(s=> {
+// var musteriler = await context.Musteriler.ToListAsync();
 
-Console.WriteLine($"{s.Ad} - {s.Sayi}");
+// var datas = from personel in context.Personellers
+//             join satis in context.Satislars
+//                 on personel.PersonelId equals satis.PersonelId into personelSatislari
 
-});
+//             select new {
+//                 personel.Adi,
+//                 satisAdedi = personelSatislari.Where(w=> w.SevkSehri.Contains("Resende")).Count()
+//             };
+// var query  = (from personel in context.Personellers
+//              join satis in context.Satislars
+//                 on personel.PersonelId equals satis.PersonelId into personelSatislari
+//                 select new {
+//                     personel.Adi,
+//                     sayi = personelSatislari.Count(),
+//                     personelSatislari
+//                 }).ToList();
 
-class Product{
-    public int Id { get; set; } 
-    public string Ad { get; set; }
-    public int Fiyat { get; set; }
+// var leftJoin  = from personel in context.Personellers
+//              join satis in context.Satislars
+//                 on personel.PersonelId equals satis.PersonelId into personelSatislari
+//                 from satis in personelSatislari.DefaultIfEmpty()
+//                 select new {
+//                     personel.Adi,
+//                     satis.OdemeTarihi
+//                 };
 
-}
+// var rightJoin  = from satis in context.Satislars
+//              join personel in context.Personellers
+//                 on satis.PersonelId equals personel.PersonelId into personelSatislari
+//                 from personel in personelSatislari.DefaultIfEmpty()
+//                 select new {
+//                     personel.Adi,
+//                     satis.OdemeTarihi
+//                 };
+
+// var unionJoin = leftJoin.Union(rightJoin).ToList();
+
+// var query = from musteri in context.Musterilers
+//             from satislar in context.Satislars.Where(w=> w.MusteriId == musteri.MusteriId)
+//             select new {
+//                 musteri,
+//                 satislar
+//             };
+
+// var query = from personel in context.Personellers
+//             from satis in context.Satislars.Select(w=> w.SatisDetaylaris)
+//             select new {
+//                 personel,
+//                 satis
+//             };
+
+var query = context.Personellers.Select(s=> s.Satislars.Where(w=> w.SatisTarihi <= DateTime.Now).FirstOrDefault());
+
+var list    = await query.ToListAsync();
+
+foreach(var data in list)
+
+System.Console.WriteLine($"{data.SatisTarihi}");
