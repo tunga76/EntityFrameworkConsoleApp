@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using EntityFrameworkConsoleApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace EntityFrameworkConsoleApp.DataContext;
 
@@ -72,7 +75,12 @@ public partial class NorthWindContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=Northwind;User Id=sa;Password=Pp123456*-;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=Northwind;User Id=sa;Password=Pp123456*-;TrustServerCertificate=True",builder => builder.EnableRetryOnFailure())
+                          .LogTo(filter: (eventId,level) => eventId == CoreEventId.ExecutionStrategyRetrying,
+                                 logger: eventdata => 
+                                 {
+                                    System.Console.WriteLine("Bağlantı yeniden Kuruluyor....");
+});
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

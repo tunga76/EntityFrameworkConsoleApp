@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using EntityFrameworkConsoleApp.DataBaseEntity;
 using EntityFrameworkConsoleApp.DataContext;
 using EntityFrameworkConsoleApp.Entities;
+using EntityFrameworkConsoleApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -64,10 +65,22 @@ NorthWindContext context = new();
 //                 satis
 //             };
 
-var query = context.Personellers.Select(s=> s.Satislars.Where(w=> w.SatisTarihi <= DateTime.Now).FirstOrDefault());
+// var query = context.Personellers.Select(s=> s.Satislars.Where(w=> w.SatisTarihi <= DateTime.Now).FirstOrDefault());
 
-var list    = await query.ToListAsync();
+// var list    = await query.ToListAsync();
 
-foreach(var data in list)
+// foreach(var data in list)
 
-System.Console.WriteLine($"{data.SatisTarihi}");
+// System.Console.WriteLine($"{data.SatisTarihi}");
+
+while(true)
+{
+    await Task.Delay(2000);
+var musterilist = context.Musterilers.Take(5).ToList();
+foreach(Musteriler musteri in musterilist)
+{
+Console.WriteLine(musteri.MusteriAdi);
+
+}
+System.Console.WriteLine("*************************");
+}
